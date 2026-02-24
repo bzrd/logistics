@@ -1,0 +1,13 @@
+replicaCount: 1
+
+image:
+  registry: your-registry.example.com
+  repository: oracle-rest-api
+  tag: latest
+
+secrets:
+  oracle: oracle-credentials    # existing Secret with ORACLE_* keys
+  auth: oracle-rest-api-auth    # existing Secret with BASIC_AUTH_* keys
+
+route:
+  host: ""    # leave empty – OpenShift auto-generates from release name

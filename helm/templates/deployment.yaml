@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: oracle-rest-api
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ORACLE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.oracle }}
+                  key: ORACLE_USER
+            - name: ORACLE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.oracle }}
+                  key: ORACLE_PASSWORD
+            - name: ORACLE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.oracle }}
+                  key: ORACLE_HOST
+            - name: ORACLE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.oracle }}
+                  key: ORACLE_PORT
+            - name: ORACLE_SERVICE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.oracle }}
+                  key: ORACLE_SERVICE
+            - name: BASIC_AUTH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.auth }}
+                  key: BASIC_AUTH_USER
+            - name: BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.auth }}
+                  key: BASIC_AUTH_PASSWORD
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
