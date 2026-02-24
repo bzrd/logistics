@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle-rest-api
+  labels:
+    app: oracle-rest-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle-rest-api
+  template:
+    metadata:
+      labels:
+        app: oracle-rest-api
+    spec:
+      containers:
+        - name: oracle-rest-api
+          image: your-registry/oracle-rest-api:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ORACLE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-credentials
+                  key: ORACLE_USER
+            - name: ORACLE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-credentials
+                  key: ORACLE_PASSWORD
+            - name: ORACLE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-credentials
+                  key: ORACLE_HOST
+            - name: ORACLE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-credentials
+                  key: ORACLE_PORT
+            - name: ORACLE_SERVICE
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-credentials
+                  key: ORACLE_SERVICE
+            - name: BASIC_AUTH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-rest-api-auth
+                  key: BASIC_AUTH_USER
+            - name: BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-rest-api-auth
+                  key: BASIC_AUTH_PASSWORD
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
